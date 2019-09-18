@@ -1,0 +1,64 @@
+language: generic
+os: linux
+dist: bionic
+sudo: required
+services:
+  - docker
+
+# Required environment variables:
+# DOCKER_USERNAME: the username of the Docker Hub account used to push images
+# DOCKER_PASSWORD: base64-encoded password of the Docker Hub user
+
+jobs:
+  include:
+  # Build multiple containers
+  - name: "Debian test"
+    os: linux
+    stage: test
+    env: CACHE_NAME=DEBIAN
+    script: ./build.sh debian
+  - name: "Fedora test"
+    os: linux
+    stage: test
+    env: CACHE_NAME=FEDORA
+    script: ./build.sh fedora
+  - name: "Ubuntu test"
+    os: linux
+    stage: test
+    env: CACHE_NAME=UBUNTU
+    script: ./build.sh ubuntu
+  - name: "CentOS test"
+    os: linux
+    stage: test
+    env: CACHE_NAME=CENTOS
+    script: ./build.sh centos
+  - name: "Debian upload"
+    os: linux
+    stage: deploy
+    env: CACHE_NAME=DEPLOY-DEBIAN
+    script: ./publish.sh debian
+  - name: "Fedora upload"
+    os: linux
+    stage: deploy
+    env: CACHE_NAME=DEPLOY-FEDORA
+    script: ./publish.sh fedora
+  - name: "Ubuntu upload"
+    os: linux
+    stage: deploy
+    env: CACHE_NAME=DEPLOY-UBUNTU
+    script: ./publish.sh ubuntu
+  - name: "CentOS upload"
+    os: linux
+    stage: deploy
+    env: CACHE_NAME=DEPLOY-CENTOS
+    script: ./publish.sh centos
+
+notifications:
+  email:
+    recipients:
+    - razican@protonmail.ch
+    - brunoop@protonmail.ch
+    - sergiodlo@protonmail.com
+    - jaimesr@protonmail.ch
+    on_success: change
+    on_failure: always
